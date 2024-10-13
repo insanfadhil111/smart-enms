@@ -2,6 +2,7 @@
 
 @section('content')
     @include('layouts.navbars.auth.topnav', ['title' => 'User Management'])
+    
     <div class="row mt-4 mx-4">
         <div class="col-12">
             @if (session('success'))
@@ -9,18 +10,23 @@
                     {{ session('success') }}
                 </div>
             @endif
+            
             <div class="alert alert-light" role="alert">
                 Here are some registered <strong>users</strong>.
             </div>
+
             <div class="card mb-4">
-                <div class="card-header pb-0 d-flex justify-content-between">
+                <div class="card-header pb-0 d-flex justify-content-between align-items-center">
                     <h6>Users</h6>
-                    <a href="{{ route('users.create') }}" class="btn btn-primary">Add Account</a>
+                    <div class="d-flex align-items-center">
+                        <input type="text" id="search-input" class="form-control me-2" placeholder="Search by firstname, lastname, email, role" style="width: 300px;" autocomplete="off">
+                        <a href="{{ route('users.create') }}" class="btn btn-primary">Add Account</a>
+                    </div>
                 </div>
 
                 <div class="card-body px-0 pt-0 pb-2">
                     <div class="table-responsive p-0">
-                        <table class="table align-items-center mb-0">
+                        <table class="table align-items-center mb-0" id="users-table">
                             <thead>
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
@@ -29,7 +35,7 @@
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="users-body">
                                 @foreach ($users as $user)
                                     <tr>
                                         <td>
@@ -63,22 +69,38 @@
                                     </tr>
                                 @endforeach
                             </tbody>
-
                         </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        // Fungsi untuk menghilangkan pesan setelah 7 detik (7000 milidetik)
+        setTimeout(function() {
+            var successMessage = document.getElementById('success-message');
+            if (successMessage) {
+                successMessage.style.display = 'none';
+            }
+        }, 7000); // 7000 ms = 7 detik
+
+        // Pencarian secara langsung
+        document.getElementById('search-input').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#users-body tr');
+
+            rows.forEach(row => {
+                const userName = row.cells[0].textContent.toLowerCase(); // Nama
+                const userEmail = row.cells[0].querySelector('.text-xs.text-secondary').textContent.toLowerCase(); // Email
+                const userRole = row.cells[1].textContent.toLowerCase(); // Role
+
+                if (userName.includes(searchTerm) || userEmail.includes(searchTerm) || userRole.includes(searchTerm)) {
+                    row.style.display = ''; // Tampilkan baris
+                } else {
+                    row.style.display = 'none'; // Sembunyikan baris
+                }
+            });
+        });
+    </script>
 @endsection
-
-<script>
-    // Fungsi untuk menghilangkan pesan setelah 7 detik (7000 milidetik)
-    setTimeout(function() {
-        var successMessage = document.getElementById('success-message');
-        if (successMessage) {
-            successMessage.style.display = 'none';
-        }
-    }, 7000); // 7000 ms = 7 detik
-</script>
-

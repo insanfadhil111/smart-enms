@@ -101,6 +101,12 @@ Route::group(['middleware' => 'auth'], function () {
 	//Account Log controller
 	Route::get('/account-log', [AccountLogController::class, 'index'])->name('account.log');
 	Route::get('/account-log', [AccountLogController::class, 'index'])->name('account-log.index');
+	
+	// Route untuk melihat logs
+	Route::get('/account-log', [AccountLogController::class, 'index'])->name('account-log.index');
+
+	// Route untuk ekspor PDF
+	Route::get('/account-log/export', [AccountLogController::class, 'exportPDF'])->name('account-log.export');
 
 	//dummy
 	Route::post('/api/test-forecast', function (Request $request) {
